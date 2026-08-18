@@ -1,14 +1,17 @@
-SINGMASTER — hand this file back when run_d.bat prints "D finished"
+SINGMASTER — campaign log (was CLI-Commands.txt)
+================================================================================
+Historical operator notes for the exact / nearby / collide campaign.
+The i=8 k<=300 job (scripts/run-i8-k300.bat) has finished.
 ================================================================================
 Project: C:\Users\wwwsa\Desktop\Singmaster
 Engine:  singmaster_intersect.py
 Machine: Intel Ultra 9 275HX, 24 threads. D is one core; do not add --workers.
-Do not run anything from this file while run_d.bat is still going.
+Do not run anything from this file while scripts/run-i8-k300.bat is still going.
 
 
 What to tell the next session
 -----------------------------
-"run_d.bat finished. Read C:\Users\wwwsa\Desktop\Singmaster\CLI-Commands.txt
+"scripts/run-i8-k300.bat finished. Read docs/campaign-log.txt
 and C:\Users\wwwsa\Desktop\Singmaster\results\ . Confirm
 fibonacci_i8_k300.json. Do NOT start E until the checks in section 4
 pass. Then E only. Classifier, sampler, A, B, C are already done.
@@ -36,7 +39,7 @@ JSON is written only when D ends, not during the run:
 
 There is no checkpoint. Sleep / hibernate / closing the window loses
 the 3.1M-digit rebuild and the extra-rep scan. Do not start a second
-copy of run_d.bat. Do not start E while D is running.
+copy of scripts/run-i8-k300.bat. Do not start E while D is running.
 
 
 1. Research question (do not change this)
@@ -107,7 +110,7 @@ Deleted bats (do not look for them, do not recreate them):
   run_after_long.bat    would have rerun A, B, C then D and E
 
 
-3. What run_d.bat is doing right now
+3. What scripts/run-i8-k300.bat is doing right now
 ------------------------------------
 Step D  intersect --imin 8 --imax 8 --kextra 300
         Rebuilds the i=8 value (~3.1M digits; the old JSON does not
@@ -232,4 +235,4 @@ Still on this PC, still worth doing, one at a time:
 
 
 Do not start E until section 4 passes.
-Hand this file back when run_d.bat prints "D finished".
+Hand this file back when scripts/run-i8-k300.bat prints "D finished".

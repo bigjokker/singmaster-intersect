@@ -1,11 +1,14 @@
-SINGMASTER — hand this file back when run_d.bat prints "D finished"
+SINGMASTER — modular layer spec (was AFTER-D.txt)
+================================================================================
+Historical: written while the exact i=8 k<=300 job (scripts/run-i8-k300.bat) ran.
+That job finished. Keep this file as the modular contract, not a live gate.
 ================================================================================
 Read this whole file before doing anything.
 Do not start E. Do not merge Claude's 1660-line dump. Do not touch D while it runs.
 
 Live project:  C:\Users\wwwsa\Desktop\Singmaster
 Engine:        singmaster_intersect.py
-Notes:         C:\Users\wwwsa\Desktop\Singmaster\CLI-Commands.txt
+Notes:         docs/campaign-log.txt
 Machine:       Intel Ultra 9 275HX. D is one core.
 USB SanDisk D: still ~40 MB/s (USB 2). Backup only, not a compute disk.
 
@@ -396,8 +399,7 @@ First command after tests: modular i=9 k=12, not k=300 on i=1..10.
 
 12. Next session opener
 -----------------------
-"D finished. Read C:\Users\wwwsa\Desktop\Singmaster-AFTER-D.txt
-and C:\Users\wwwsa\Desktop\Singmaster\CLI-Commands.txt.
+"Read docs/modular-spec.txt and docs/campaign-log.txt.
 Confirm results\fibonacci_i8_k300.json against section 2.
 Then patch the live singmaster_intersect.py (modular layer only).
 Do not start E. Do not replace the file."

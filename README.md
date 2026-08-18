@@ -37,7 +37,8 @@ Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. M
 
 ## Notes
 
-- `CLI-Commands.txt` — run log and gates (D/E order is historical)
-- `AFTER-D.txt` — modular spec and post-D procedure
+- [`docs/modular-spec.txt`](docs/modular-spec.txt) — Lucas/modular layer: what a certificate is, how to run scans, what not to rebuild
+- [`docs/campaign-log.txt`](docs/campaign-log.txt) — original search campaign (exact i=8 \(k\le 300\), nearby, collide)
+- [`scripts/run-i8-k300.bat`](scripts/run-i8-k300.bat) — historical wrapper for the exact i=8 \(k\le 300\) job (already finished)
 - Settled theorem pairs \((k,l)\) and nearby \((1,1),(1,2),(2,1)\) are not re-sieved
 - Classifier uses `is_fibonacci_pair`, not “rows differ by 1”

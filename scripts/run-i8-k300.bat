@@ -1,7 +1,7 @@
 @echo on
 REM D only: Fibonacci i=8 extra-rep k<=300. One core, a few hours.
 REM Start this after nearby_k333k-2M_de6.json looks clean.
-REM See C:\Users\wwwsa\Desktop\Singmaster\CLI-Commands.txt
+REM See docs\campaign-log.txt (historical). Do not rerun unless you mean to.
 REM
 REM ALERT / NEW EXTRA REPRESENTATION = the result. Stop and paste it.
 REM extras=[] / status=known_fibonacci is a certificate, not a failure.
