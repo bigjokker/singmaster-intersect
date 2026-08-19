@@ -12,6 +12,7 @@ int64 only: s·F[b] < p² < 2^63.
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -23,6 +24,58 @@ KMAX = 5_182_637
 KMIN = K + 2  # 4126649
 NCOLS = KMAX - KMIN + 1  # 1055989
 LOG10_M = 3120255.2212
+
+
+@dataclass(frozen=True)
+class Fam:
+    i: int
+    N: int
+    K: int
+
+    @property
+    def D(self) -> int:
+        return self.N - self.K
+
+    @property
+    def N2(self) -> int:
+        return self.N // 2
+
+    @property
+    def p_two(self) -> int:
+        return int(math.isqrt(self.N)) + 1
+
+    @property
+    def K1(self) -> int:
+        return self.K + 1
+
+
+def make_fam(i: int) -> Fam:
+    import gmpy2
+
+    n = int(gmpy2.fib(2 * i + 2) * gmpy2.fib(2 * i + 3))
+    k = int(gmpy2.fib(2 * i) * gmpy2.fib(2 * i + 3))
+    return Fam(i=i, N=n, K=k)
+
+
+def kmax_of(fam: Fam) -> tuple[int, float]:
+    """Largest k with C(2k,k) <= C(N,K), via lgamma. Also log10 m."""
+    logm = (
+        math.lgamma(fam.N + 1)
+        - math.lgamma(fam.K + 1)
+        - math.lgamma(fam.N - fam.K + 1)
+    ) / math.log(10)
+
+    def log_central(k: int) -> float:
+        return (math.lgamma(2 * k + 1) - 2 * math.lgamma(k + 1)) / math.log(10)
+
+    lo, hi = 2, fam.N
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if log_central(mid) <= logm:
+            lo = mid
+        else:
+            hi = mid - 1
+    return lo, logm
 
 PRIMES = [
     5_401_853,
@@ -70,7 +123,7 @@ def fact_table(p: int) -> np.ndarray:
     return F
 
 
-def r_from_F(F: np.ndarray, p: int) -> int:
+def r_from_F(F: np.ndarray, p: int, *, N: int = N, K: int = K) -> int:
     n0 = N - p
     return (
         int(F[n0])
@@ -80,7 +133,7 @@ def r_from_F(F: np.ndarray, p: int) -> int:
     )
 
 
-def r_falling(p: int) -> int:
+def r_falling(p: int, *, N: int = N, K: int = K) -> int:
     n0 = N - p
     kk = n0 - K
     num = 1
@@ -92,9 +145,9 @@ def r_falling(p: int) -> int:
     return num * pow(den, -1, p) % p
 
 
-def r_closed(p: int) -> int:
+def r_closed(p: int, *, N: int = N, K: int = K) -> int:
     """(-1)^K C(K+δ-1, δ-1) mod p, δ = 2p-N. Lower index is δ-1."""
-    dlt = delta(p)
+    dlt = 2 * p - N
     n = K + dlt - 1
     kk = dlt - 1
     c = 1
@@ -106,13 +159,13 @@ def r_closed(p: int) -> int:
     return c
 
 
-def r_checked(F: np.ndarray, p: int, falling: bool = False) -> int:
-    ra = r_from_F(F, p)
-    rc = r_closed(p)
+def r_checked(F: np.ndarray, p: int, falling: bool = False, *, N: int = N, K: int = K) -> int:
+    ra = r_from_F(F, p, N=N, K=K)
+    rc = r_closed(p, N=N, K=K)
     if ra != rc:
         raise RuntimeError(f"r(p) table {ra} != closed {rc} at p={p}")
     if falling:
-        rb = r_falling(p)
+        rb = r_falling(p, N=N, K=K)
         if ra != rb:
             raise RuntimeError(f"r(p) table {ra} != falling {rb} at p={p}")
     return ra
@@ -139,16 +192,23 @@ def scan_ks(F: np.ndarray, p: int, r: int, ks) -> list[dict]:
     return out
 
 
-def scan_columns(p: int, ks, r_expected: int | None = None) -> tuple[int, list[dict]]:
-    """Build F, check r, scan. Returns (r, survivors). Worker entry."""
+def scan_columns(
+    p: int,
+    ks,
+    r_expected: int | None = None,
+    *,
+    N: int = N,
+    K: int = K,
+) -> tuple[int, list[dict]]:
+    """Build F, check Band II r, scan. Returns (r, survivors). Worker entry."""
     F = fact_table(p)
-    r = r_checked(F, p, falling=False)
+    r = r_checked(F, p, falling=False, N=N, K=K)
     if r_expected is not None and r != r_expected:
         raise RuntimeError(f"r(p) {r} != expected {r_expected} at p={p}")
     return r, scan_ks(F, p, r, ks)
 
 
-def r_two_digit(F: np.ndarray, p: int) -> int:
+def r_two_digit(F: np.ndarray, p: int, *, N: int = N, K: int = K) -> int:
     """C(N,K) mod p via two-digit Lucas from the factorial table.
 
     Works for every p > k_max of Band I leftover and for p > N/2.
@@ -163,10 +223,10 @@ def r_two_digit(F: np.ndarray, p: int) -> int:
     return cab * c0 % p
 
 
-def scan_columns_general(p: int, ks) -> tuple[int, list[dict]]:
+def scan_columns_general(p: int, ks, *, N: int = N, K: int = K) -> tuple[int, list[dict]]:
     """Like scan_columns, but r(p) is two-digit Lucas, not the α=1 closed form."""
     F = fact_table(p)
-    r = r_two_digit(F, p)
+    r = r_two_digit(F, p, N=N, K=K)
     if r == 0:
         raise RuntimeError(f"live prime {p} has r=0 (Z / digit-0); do not scan")
     return r, scan_ks(F, p, r, ks)

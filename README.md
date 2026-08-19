@@ -42,6 +42,7 @@ python singmaster_intersect.py modular --imin 9 --imax 9 --kextra 80
 | `results/walk_369.json` | Those 369 walked past prime 3: max run 6, counts match size law |
 | `results/bandii_sweep.json` | Band II \(p>N/2\): 1,055,989 columns, all killed by prime 8 |
 | `results/zjump.json` | Band I remnant Z-jump: 3,215,816 columns, 0 anomalies, tail = walk-369 |
+| `results/i7_sweep.json` | i=7 Band II + Z-jump: all extra \(k\) killed, \(N=6\) (110.7 s) |
 
 Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. Modular already killed those columns.
 

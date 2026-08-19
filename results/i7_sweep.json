@@ -1,0 +1,170 @@
+{
+  "search": "i7_sweep",
+  "i": 7,
+  "N": 1576239,
+  "K": 602069,
+  "d": 974170,
+  "k_max": 756136,
+  "log10_m": 455236.264238,
+  "k_z": [
+    201,
+    602068
+  ],
+  "k_bii": [
+    602071,
+    756136
+  ],
+  "n_z": 601868,
+  "n_bii": 154066,
+  "primes_bii": [
+    788129,
+    788153,
+    788159,
+    788167,
+    788173,
+    788189,
+    788209,
+    788213,
+    788231,
+    788261,
+    788267,
+    788287,
+    788309,
+    788317
+  ],
+  "workers": 8,
+  "phases": {
+    "bandii": [
+      {
+        "prime_index": 1,
+        "p": 788129,
+        "n": 15061,
+        "even": 0.6585,
+        "mean_k": 661365
+      },
+      {
+        "prime_index": 2,
+        "p": 788153,
+        "n": 1862,
+        "even": 0.7932,
+        "mean_k": 648102
+      },
+      {
+        "prime_index": 3,
+        "p": 788159,
+        "n": 280,
+        "even": 0.8786,
+        "mean_k": 639468
+      },
+      {
+        "prime_index": 4,
+        "p": 788167,
+        "n": 37,
+        "even": 1.0,
+        "mean_k": 635563
+      },
+      {
+        "prime_index": 5,
+        "p": 788173,
+        "n": 11,
+        "even": 1.0,
+        "mean_k": 625402
+      },
+      {
+        "prime_index": 6,
+        "p": 788189,
+        "n": 2,
+        "even": 1.0,
+        "mean_k": 615594
+      },
+      {
+        "prime_index": 7,
+        "p": 788209,
+        "n": 0,
+        "even": null,
+        "mean_k": null
+      }
+    ],
+    "zjump": [
+      {
+        "round": 1,
+        "n_primes": 27622,
+        "n": 8783,
+        "even": 0.648,
+        "mean_k": 296799,
+        "n_nolive": 0
+      },
+      {
+        "round": 2,
+        "n_primes": 99,
+        "n": 613,
+        "even": 0.8059,
+        "mean_k": 285935,
+        "n_nolive": 0
+      },
+      {
+        "round": 3,
+        "n_primes": 17,
+        "n": 87,
+        "even": 0.8966,
+        "mean_k": 202770,
+        "n_nolive": 0
+      },
+      {
+        "round": 4,
+        "n_primes": 7,
+        "n": 23,
+        "even": 0.913,
+        "mean_k": 137562,
+        "n_nolive": 0
+      },
+      {
+        "round": 5,
+        "n_primes": 3,
+        "n": 5,
+        "even": 0.8,
+        "mean_k": 547,
+        "n_nolive": 0
+      },
+      {
+        "round": 6,
+        "n_primes": 1,
+        "n": 1,
+        "even": 1.0,
+        "mean_k": 487,
+        "n_nolive": 0
+      },
+      {
+        "round": 7,
+        "n_primes": 1,
+        "n": 1,
+        "even": 1.0,
+        "mean_k": 487,
+        "n_nolive": 0
+      },
+      {
+        "round": 8,
+        "n_primes": 1,
+        "n": 1,
+        "even": 1.0,
+        "mean_k": 487,
+        "n_nolive": 0
+      },
+      {
+        "round": 9,
+        "n_primes": 1,
+        "n": 0,
+        "even": null,
+        "mean_k": null,
+        "n_nolive": 0
+      }
+    ]
+  },
+  "n_bii_alive": 0,
+  "n_z_alive": 0,
+  "bii_survivors": [],
+  "z_survivors": [],
+  "clean": true,
+  "certificate": "Every extra k in [2, k_max] except {K, K+1} for i=7 has r(p) notin I_{p,k}. Together with exact k<=200 and two family columns, N(C(N,K))=6. Not Singmaster.",
+  "seconds": 110.73
+}
