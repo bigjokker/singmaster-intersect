@@ -50,7 +50,8 @@ Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. M
 Every extra \(k\in[2,k_{\max}]\setminus\{K,K+1\}\) has an unconditional
 modular certificate. \(N(C(F_{18}F_{19},F_{16}F_{19}))=6\). Not Singmaster.
 
-- [`docs/band-I.md`](docs/band-I.md) — theorem, lemmas, census
+- [`docs/i8-N6.md`](docs/i8-N6.md) — the \(N=6\) theorem, as a note
+- [`docs/band-I.md`](docs/band-I.md) — lemmas and census behind it
 - [`docs/bandii-spec.md`](docs/bandii-spec.md) — Band II \(p>N/2\) sweep
 - [`docs/zjump-spec.md`](docs/zjump-spec.md) — Band I Z-jump remnant
 - [`docs/zeromap-p1e5-1e6.md`](docs/zeromap-p1e5-1e6.md) — 136 digit-windows, 38 NONE

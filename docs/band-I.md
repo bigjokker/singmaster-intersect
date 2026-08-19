@@ -2,6 +2,7 @@
 
 This does **not** prove Singmaster’s conjecture. It proves there is no extra
 left-half column for one value: \(m=C(F_{18}F_{19},F_{16}F_{19})\).
+The readable statement is [`i8-N6.md`](i8-N6.md).
 
 Fixed objects (do not use \(K=F_{18}F_{17}\); that is \(K+1\)):
 
