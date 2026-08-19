@@ -2,7 +2,10 @@
 
 Search past the Blokhuis–Brouwer–de Weger (2017) envelope for extra binomial representations of the Lind/Singmaster/Tovey \(N=6\) Fibonacci family, plus unsettled nearby-row and column-pair collisions.
 
-This does **not** prove Singmaster’s conjecture.
+This does **not** prove Singmaster’s conjecture. It does prove
+\(N\bigl(C(F_{18}F_{19},F_{16}F_{19})\bigr)=6\) exactly: every extra
+left-half column \(2\le k\le k_{\max}\), \(k\notin\{K,K+1\}\), has a
+modular kill certificate.
 
 ## Engine
 
@@ -37,15 +40,19 @@ python singmaster_intersect.py modular --imin 9 --imax 9 --kextra 80
 | `results/triple_hunt_p1e6-K.json` | NONE-window image runs, \(P_\mathrm{hi}>10^6\): max run 2, 0 triples (fat cells not exhaustive) |
 | `results/fat_image_hunt.json` | Fat NONE+PART-lower, first 3 primes: 369 triples, hunt cap max run 3 |
 | `results/walk_369.json` | Those 369 walked past prime 3: max run 6, counts match size law |
+| `results/bandii_sweep.json` | Band II \(p>N/2\): 1,055,989 columns, all killed by prime 8 |
+| `results/zjump.json` | Band I remnant Z-jump: 3,215,816 columns, 0 anomalies, tail = walk-369 |
 
 Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. Modular already killed those columns.
 
-## Band I (i=8)
+## i=8 extra columns
 
-Next-prime obstruction for extra columns \(2\le k<K\). Lemmas plus a finite census.
-Does **not** prove every Band I column dies, and does **not** prove Singmaster.
+Every extra \(k\in[2,k_{\max}]\setminus\{K,K+1\}\) has an unconditional
+modular certificate. \(N(C(F_{18}F_{19},F_{16}F_{19}))=6\). Not Singmaster.
 
-- [`docs/band-I.md`](docs/band-I.md) — what is theorem / census / heuristic / open
+- [`docs/band-I.md`](docs/band-I.md) — theorem, lemmas, census
+- [`docs/bandii-spec.md`](docs/bandii-spec.md) — Band II \(p>N/2\) sweep
+- [`docs/zjump-spec.md`](docs/zjump-spec.md) — Band I Z-jump remnant
 - [`docs/zeromap-p1e5-1e6.md`](docs/zeromap-p1e5-1e6.md) — 136 digit-windows, 38 NONE
 
 ## Notes

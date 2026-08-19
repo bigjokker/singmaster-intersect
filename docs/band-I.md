@@ -1,7 +1,7 @@
-# Band I next-prime (i=8)
+# i=8 extra columns (Band I and Band II)
 
-This is a census plus a few lemmas. It does **not** prove Singmaster’s conjecture
-and it does **not** prove that every Band I column dies.
+This does **not** prove Singmaster’s conjecture. It proves there is no extra
+left-half column for one value: \(m=C(F_{18}F_{19},F_{16}F_{19})\).
 
 Fixed objects (do not use \(K=F_{18}F_{17}\); that is \(K+1\)):
 
@@ -9,135 +9,121 @@ Fixed objects (do not use \(K=F_{18}F_{17}\); that is \(K+1\)):
 N=F_{18}F_{19}=10803704,\quad
 K=F_{16}F_{19}=4126647,\quad
 d=N-K=6677057,\quad
-N/2=5401852.
+N/2=5401852,\quad
+k_{\max}=5182637.
 \]
 
-Band I is \(2\le k<K\). Two-digit primes: \(3287\le p\le K\).
+Band I is \(2\le k<K\). Band II is \(K+2\le k\le k_{\max}\).
+Family columns \(K,K+1\) are never marked impossible.
+Two-digit primes: \(3287\le p\le K\).
 Write \(\alpha=\lfloor N/p\rfloor\), \(\beta=\lfloor K/p\rfloor\),
-\(n_0=N-\alpha p\), \(k_0=K-\beta p\), \(g=p-k\).
+\(n_0=N-\alpha p\), \(k_0=K-\beta p\), \(g=p-k\),
+\(r(p)=C(N,K)\bmod p\).
 
-## Theorems
+## Theorem
+
+**Image.** For any prime \(p>k\),
+
+\[
+\{C(n,k)\bmod p:n\ge k\}
+=\{0\}\cup\{C(k+j,j)\bmod p:0\le j<p-k\}=I_{p,k}.
+\]
+
+So \(r(p)\notin I_{p,k}\) is an unconditional certificate that column \(k\)
+never represents \(m\).
+
+**No extra column.** Every
+\(k\in[2,k_{\max}]\setminus\{K,K+1\}\) has such a prime. Therefore
+
+\[
+N\bigl(C(F_{18}F_{19},F_{16}F_{19})\bigr)=6
+\]
+
+exactly (the known family, no extra left-half). Not Singmaster.
+
+Coverage:
+
+| \(k\) | job | result |
+|---|---|---|
+| \(2..400\) | exact \(k\le 300\) + modular \(k\le 400\) | all impossible |
+| \(401..10^5\) | Stage 1–2 next-prime | all killed |
+| \(10^5..10^6\) | Stage 3 + Z-jump hang-guards | all killed |
+| \(10^6..4126621\) | Z-jump | all killed |
+| \(4126622..4126646\) | stragglers, \(p>N/2\) | 25/25 killed |
+| \(K,K+1\) | family | not tested |
+| \(4126649..k_{\max}\) | Band II, \(p>N/2\) | 1,055,989/1,055,989 killed |
+
+## Lemmas
 
 **Digit-0.** For two-digit \(p\), \(C(N,K)\equiv 0\pmod p\) iff \(p(\alpha-\beta)>d\).
 
 **NONE nonvanishing.** If \(p(\alpha-\beta)\le d\) then
 \(C(N,K)\equiv C(\alpha,\beta)C(n_0,k_0)\not\equiv 0\pmod p\).
-Every NONE survivor is an image match, never a zero.
-PART-lower (\(p<z_\mathrm{lo}\)) is the same image clause (digit-0 silent).
+PART-lower (\(p<z_\mathrm{lo}\)) is the same image clause.
 
-**Kill test (no giant \(m\)).** With
-\(I_g=\{(-1)^j\binom{g-1}{j}\bmod p:0\le j<g\}\)
-(equivalently \(\binom{k+j}{j}\), **not** \(\binom{k}{j}\)),
-a NONE / PART-lower prime kills iff \(r(p)\notin I_g\).
+**Kill test (no giant \(m\)).** \(I_g=\{(-1)^j\binom{g-1}{j}\bmod p:0\le j<g\}\)
+(equivalently \(\binom{k+j}{j}\), **not** \(\binom{k}{j}\)).
+A live prime kills iff \(r(p)\notin I_g\).
 
-**Z-slab.** If no prime lies in \((k,t]\) for threshold \(t=d/(\alpha-\beta)\),
-then \(q(k)\) is at least the first prime after the slab top \(u\).
-
-**Z-width (closed).** Cell
+**Z-width.** Cell
 \(P_\mathrm{lo}=\max(\lfloor N/(\alpha+1)\rfloor+1,\lfloor K/(\beta+1)\rfloor+1)\),
 \(P_\mathrm{hi}=\min(\lfloor N/\alpha\rfloor,\lfloor K/\beta\rfloor)\),
-\(z_\mathrm{lo}=\lfloor d/(\alpha-\beta)\rfloor+1\),
-\(\mathrm{Zw}=P_\mathrm{hi}-\max(P_\mathrm{lo},z_\mathrm{lo})\) (or 0).
-FULL / PART / NONE from where \(z_\mathrm{lo}\) sits in the cell.
-Six Stage-3 fat slabs recover (prime-rounding only).
+\(z_\mathrm{lo}=\lfloor d/(\alpha-\beta)\rfloor+1\).
+FULL / PART / NONE from where \(z_\mathrm{lo}\) sits.
+Live primes are NONE, PART-lower, and \(N/2<p\le d\). Digit-0 and
+\(K<p\le N/2\) cannot kill.
 
-**Pascal size of \(I_g\).** \(I_g\) is the coefficient set of \((1-X)^{g-1}\)
-over \(\mathbf{F}_p\). For \(g-1<p\) no coefficient vanishes. The only
-systematic collision is the reflection \(j\leftrightarrow n-j\) with \(n=g-1\):
+**Pascal size of \(I_g\).** Coefficient set of \((1-X)^{g-1}\) over
+\(\mathbf{F}_p\). Only systematic collision is reflection \(j\leftrightarrow n-j\):
+\(g\) odd \(\Rightarrow \lvert I_g\rvert\approx(g+1)/2\);
+\(g\) even \(\Rightarrow \lvert I_g\rvert\approx g\);
+then birthday \(p(1-(1-1/p)^M)\). Prime gaps even \(\Rightarrow\) \(g\)-parity
+frozen along a chain.
 
-- \(g\) odd (\(n\) even): fold, \(\lvert I_g\rvert\approx(g+1)/2\)
-- \(g\) even (\(n\) odd): sends \(v\mapsto -v\), no fold, \(\lvert I_g\rvert\approx g\)
+**Band II zero block.** \(K<p\le N/2\Rightarrow p\mid m\). Those primes cannot
+kill. The Band II sweep starts at \(p=5401853\), never at \(k\).
 
-Remaining collisions match the birthday count
-\(p\bigl(1-(1-1/p)^M\bigr)\) with \(M=g\) or \((g+1)/2\), to \(0.1\%\)
-on the fat cells. Prime gaps are even, so the parity of \(g\) is frozen
-along a chain: even-\(g\) columns stay about twice as easy.
+**Band II \(r(p)\).** On \(N/2<p\le d\), \(\alpha=1,\beta=0\),
+\(r(p)=C(N-p,K)\equiv(-1)^K C(K+\delta-1,\delta-1)\pmod p\) with
+\(\delta=2p-N\). At \(p_1=5401853\), \(\delta=2\), \(r=1275205\).
 
-**Band II zero block.** \(K<p\le N/2\Rightarrow p\mid m\). Those primes cannot kill.
-Out of scope for next-prime-below-\(K\).
+## Census (do not rerun)
 
-## Census
+**3(b)** on 38 NONE windows, \(10^5\le p\le 10^6\): max run 2, 0 triples,
+0 whole-window. [`zeromap-p1e5-1e6.md`](zeromap-p1e5-1e6.md).
 
-**3(b) / image runs**, all 38 NONE windows on \(10^5\le p\le 10^6\),
-every \(k\) from the preceding Z through first-NONE\(-1\):
-no whole-window image-run; longest consecutive NONE-prime image-run is 2;
-zero triples (low-\(\rho\) sample; independence guessed \(\sim 0.04\)).
-Table: [`zeromap-p1e5-1e6.md`](zeromap-p1e5-1e6.md).
-
-Known doubles, each killed at the next NONE prime:
-
-| \(k\) | window | matches \((p,j)\) | kill |
-|---:|---:|---|---:|
-| 268733 | (39,15) | 270097 / 589, 270121 / 196 | 270131 |
-| 761274 | (13,5) | 771697 / 3436, 771703 / 4909 | 771739 |
-| 961361 | (10,4) | 982171 / 11442, 982183 / 5741 | 982187 |
-| 1335751 | (7,3) | 1350467 / 833, 1350469 / 3128 | 1350473 |
-
-**Stage 3**, \(k=100001..1000000\), until-kill, hang-guard \(p-k>20000\)
-(that is a **gap** cap, not 20,000 surviving primes):
-900000 columns, 31420 s; 810805 killed; 89195 hang-guard;
-\(r=0\) on 452944 columns (50.3%).
-Every killed row with \(r\ge 50\) (306189/306189) has \(q\) immediately after a \(Z_\mathrm{last}\).
-All hang-guard \(k\) sit in six fat Z slabs (seven runs). Summary:
-[`../results/nextprime_i8_k100001-1000000_summary.json`](../results/nextprime_i8_k100001-1000000_summary.json).
-The 81 MB row dump stays local.
-
-**Near-\(K\) stragglers**, \(k=4126622..4126646\): no prime in \((k,K]\).
-All 25 killed by the first primes \(>N/2\): 21 at 5401853, four image-survive
-that prime (explicit \(j\)) and die at 5401861.
-[`../results/stragglers_nearK.json`](../results/stragglers_nearK.json).
-Not a theorem that the first \(p>N/2\) always kills.
-
-**Triple hunt** on NONE cells with \(P_\mathrm{hi}>10^6\): 0 triples, max run 2
-(the (7,3) double above). Fat cells (5,2) and (2,1) were three canonical \(k\)
-only (`g_max>25000`). [`../results/triple_hunt_p1e6-K.json`](../results/triple_hunt_p1e6-K.json).
-
-**Fat-image hunt**, first three primes of every NONE + PART-lower cell with
-\(P_\mathrm{hi}>10^6\) and \(g_\max>25000\) (8/8, 6.82 h):
+**Fat-image**, first 3 primes of fat NONE+PART-lower, \(P_\mathrm{hi}>10^6\),
+\(g_{\max}>25000\): 369 triples, hunt cap 3.
 [`../results/fat_image_hunt.json`](../results/fat_image_hunt.json).
-Two-to-three is false as a lemma: 369 first-3-prime image triples
-(324 in (3,1) PART-lower, 20 on genuine NONE). Hunt cap `max_run=3`
-(only three primes tested). Low-\(\rho\) cells (9,3) and (10,4) still
-max run 2; (10,4) recovered \(k=961361\).
+Two-to-three is false as a lemma. Size law predicts the counts
+(\(+1.4\sigma\) pooled).
 
-Independence-after-size (Pascal + birthday, no fitted parameters) predicts
-the (3,1)/(2,1)/(5,2) counts \(n_1/n_2/n_3\) to \(+1.4\sigma\) on pooled
-triples (344 observed vs 319). The old \(n_1/g_\max=0.0626\Rightarrow
-\lvert I_g\rvert/g\approx 0.355\) step was a slip: that ratio averages
-over \(g=1..g_\max\). Even-\(g\) fraction of the 369: \(332/369=0.900\)
-(predicted \(0.878\)).
-
-**Walk-369**, those 369 \(k\) past prime 3, image clause only, until kill
-or cell end (174 s):
+**Walk-369:** those 369 past prime 3. Pre-registered 44/6/0.8/0.1 vs
+measured 42/4/1/0, `max_run=6`. Record \(k=2227205\), kill 2701099.
 [`../results/walk_369.json`](../results/walk_369.json).
-Pre-registered vs measured: survive-4 \(42\) (pred \(\sim 44\), band \(32\)–\(58\));
-survive-5 \(4\) (\(\sim 6\)); survive-6 \(1\) (\(\sim 0.8\)); survive-7 \(0\) (\(\sim 0.1\)).
-`max_run=6`. All 369 killed; no cell-end, no digit-0.
-Record: \((3,1)\) \(k=2227205\), \(g=473762\) even, dies at \(2701099\) after
-six image matches. NONE cells (2,1) and (5,2) all died at run 3.
 
-## Heuristic / open
+**Band II** \(p>N/2\), 1,055,989 columns, cap 14, factorial kernel, 1235 s:
+died at prime 8. Pass 1/4/6 inside Poisson bands. Last live \(k=4155257\).
+[`../results/bandii_sweep.json`](../results/bandii_sweep.json).
+Spec: [`bandii-spec.md`](bandii-spec.md).
 
-Long \(q(k)-k\) is Z-slab geometry plus a short image tail. A single
-numerical \(G(k)\) (including \(\lceil(\ln k)^2\rceil\)) hides that.
-The tail is length \(\le 2\) at Stage-3 \(\rho\le 0.039\), and length
-\(6\) at the global max \(\rho=0.176\). Whole-window image-run on a fat
-cell is \(10^{-\mathrm{many}}\) under the size law; the walk is the
-registered check.
+**Z-jump** remnant, 3,215,816 columns (89,195 hang-guards +
+\(10^6..4126621\)), cap 12, 3102 s: 0 anomalies, died at live-prime 7.
+Rounds 4–6 are the walk-369 tail (same 42/4/1, same \(k=2227205\)).
+[`../results/zjump.json`](../results/zjump.json).
+Spec: [`zjump-spec.md`](zjump-spec.md).
 
-\(\rho=\mathrm{Zw}/P_\mathrm{hi}\) (that is \(g/p\) at the first NONE prime for
-an under-Z \(k\)) is \(\le 0.039\) on the Stage-3 map. Globally among two-digit
-cells it reaches **0.176** at \((\alpha,\beta)=(4,1)\), then 0.109 at (7,2).
-Same geometry as the fat-image prize: under-Z \(k\) of (4,1), first NONE
-primes of (3,1), \(g_\max=475282\). So \(g/p\le 1/20\) is not a Band I bound.
-A hang-guard that walked (4,1) would need \(>475240\). Do not run that.
+**Stragglers** \(k=4126622..4126646\): 25/25 killed at \(p>N/2\).
+[`../results/stragglers_nearK.json`](../results/stragglers_nearK.json).
 
-Frozen \((\alpha,\beta)\) writes \(r(p)\) but the falling-factorial identity
-relating \(r(p)\) and \(r(p+h)\) lives in \(\mathbf{Z}\) and does not
-descend \(\mathbf{F}_p\to\mathbf{F}_{p+h}\) (CRT). Independence is the
-right model for consecutive NONE primes; the character-sum shape for a
-correlation bound is the wrong shape (completion loses Pascal folding;
-Weil is vacuous for \(j>\sqrt{p}\)).
+**Stage 3** hang-guard \(p-k>20000\) is obsolete (Z-jump). Summary:
+[`../results/nextprime_i8_k100001-1000000_summary.json`](../results/nextprime_i8_k100001-1000000_summary.json).
 
-This line does not start Stage 4 / \(k=10^6..K\) until-kill, Band II next-prime,
-exact \(i=10\), or nearby \(10^9..2\cdot 10^9\).
+## Heuristic (closed as a search)
+
+Long \(q(k)-k\) is Z-slab plus a short image tail (max 6 at \(\rho=0.176\)).
+\(G(k)=\lceil(\ln k)^2\rceil\) is false. Independence-after-size is the
+right model; the Q1 character sum is the wrong shape.
+
+Do not start Stage 4 until-kill, Band II next-prime from \(k\), exact \(i=10\),
+or nearby \(10^9..2\cdot 10^9\).
