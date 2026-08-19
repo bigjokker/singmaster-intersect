@@ -1,0 +1,50 @@
+{
+  "search": "i2_sweep",
+  "i": 2,
+  "N": 104,
+  "K": 39,
+  "d": 65,
+  "k_max": 49,
+  "log10_m": 28.78688,
+  "k_z": [
+    201,
+    38
+  ],
+  "k_bii": [
+    41,
+    49
+  ],
+  "n_z": 0,
+  "n_bii": 9,
+  "primes_bii": [
+    53,
+    59,
+    61
+  ],
+  "workers": 8,
+  "phases": {
+    "bandii": [
+      {
+        "prime_index": 1,
+        "p": 53,
+        "n": 1,
+        "even": 0.0,
+        "mean_k": 42
+      },
+      {
+        "prime_index": 2,
+        "p": 59,
+        "n": 0,
+        "even": null,
+        "mean_k": null
+      }
+    ]
+  },
+  "n_bii_alive": 0,
+  "n_z_alive": 0,
+  "bii_survivors": [],
+  "z_survivors": [],
+  "clean": true,
+  "certificate": "Every extra k in [2, k_max] except {K, K+1} for i=2 has r(p) notin I_{p,k}. Together with exact k<=200 and two family columns, N(C(N,K))=6. Not Singmaster.",
+  "seconds": 0.448
+}

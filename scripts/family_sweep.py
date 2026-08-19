@@ -44,7 +44,10 @@ CAP_BII = 14
 CAP_Z = 12
 N_CHUNKS = 32
 DEFAULT_WORKERS = 8
-K_EXACT = {5: 200, 6: 200, 7: 200}  # exact intersect in fibonacci_i1-7.json
+K_EXACT = {2: 200, 3: 200, 4: 200, 5: 200, 6: 200, 7: 200, 9: 80}
+# i=2..7: exact k_extra=200 in fibonacci_i1-7.json
+# i=9: modular k<=80 all impossible. i=1 is 3003 (N=8), skip.
+# i=8 closed by the dedicated pipeline.
 
 
 def cells(fam: Fam) -> list[dict]:
@@ -281,10 +284,13 @@ def preflight(fam: Fam, kmax: int, primes: list[int]) -> list[tuple[int, int]]:
     windows = cells(fam)
     ivs = live_intervals(fam, windows)
     k0 = K_EXACT.get(fam.i, 2) + 1
-    p0 = first_live_after(k0, ivs, fam.D)
-    if p0 is None or p0 <= k0:
-        raise RuntimeError(f"no live prime after {k0}")
-    print(f"  live after k={k0}: {p0}  intervals={len(ivs)}", flush=True)
+    if k0 < fam.K:
+        p0 = first_live_after(k0, ivs, fam.D)
+        if p0 is None or p0 <= k0:
+            raise RuntimeError(f"no live prime after {k0}")
+        print(f"  live after k={k0}: {p0}  intervals={len(ivs)}", flush=True)
+    else:
+        print(f"  Band I extra already in exact k<= {k0-1}; Z-jump empty", flush=True)
     print("=== pre-flight passed ===", flush=True)
     return ivs
 
@@ -321,12 +327,12 @@ def main() -> int:
     t0 = time.time()
     fam = make_fam(i)
     kmax, logm = kmax_of(fam)
-    primes = first_primes_above(fam.N2, fam.D, kmax)
-    if len(primes) < CAP_BII:
-        raise RuntimeError(f"only {len(primes)} live Band II primes")
+    primes = first_primes_above(fam.N2, fam.D, kmax, n=max(CAP_BII, 16))
+    if not primes:
+        raise RuntimeError("no live Band II primes in (N/2, d]")
     ivs = preflight(fam, kmax, primes)
     k_lo_z = K_EXACT.get(i, 2) + 1
-    n_z = fam.K - k_lo_z  # k_lo_z .. K-1
+    n_z = max(0, fam.K - k_lo_z)  # k_lo_z .. K-1, or 0 if exact already covers
     n_bii = kmax - (fam.K + 2) + 1
     print(
         f"=== i={i} sweep  Z {k_lo_z}..{fam.K-1} ({n_z})  "
@@ -351,11 +357,23 @@ def main() -> int:
         for pi, p in enumerate(primes[:CAP_BII], start=1):
             tag = f"bii{pi}"
             if alive is None:
-                chunks = equal_g_chunks(fam.K + 2, kmax, p, N_CHUNKS)
-                jobs = [
-                    ("bii", p, list(range(lo, hi + 1)), fam.N, fam.K, r_closed(p, N=fam.N, K=fam.K))
-                    for lo, hi in chunks
-                ]
+                if n_bii < 2000:
+                    jobs = [
+                        (
+                            "bii",
+                            p,
+                            list(range(fam.K + 2, kmax + 1)),
+                            fam.N,
+                            fam.K,
+                            r_closed(p, N=fam.N, K=fam.K),
+                        )
+                    ]
+                else:
+                    chunks = equal_g_chunks(fam.K + 2, kmax, p, N_CHUNKS)
+                    jobs = [
+                        ("bii", p, list(range(lo, hi + 1)), fam.N, fam.K, r_closed(p, N=fam.N, K=fam.K))
+                        for lo, hi in chunks
+                    ]
             else:
                 if not alive:
                     break
@@ -386,7 +404,7 @@ def main() -> int:
         bii_left = []
 
     # --- Z-jump Band I remnant ---
-    if "zjump" not in complete:
+    if "zjump" not in complete and n_z > 0:
         current: list = [{"k": k} for k in range(k_lo_z, fam.K)]
         zrounds = []
         for rnd in range(1, CAP_Z + 1):
@@ -429,10 +447,13 @@ def main() -> int:
         phases["zjump"] = zrounds
         z_left = current
         z_none = []
-    else:
+    elif "zjump" in complete:
         print("  zjump phase already complete", flush=True)
         z_left = []
-        z_none = []
+    else:
+        print("  zjump skipped (exact already covers Band I extra)", flush=True)
+        z_left = []
+        write_jsonl(chk, {"event": "phase_complete", "phase": "zjump", "skipped": True})
 
     n_bii_left = len(bii_left) if isinstance(bii_left, list) else 0
     n_z_left = len(z_left) if isinstance(z_left, list) else 0

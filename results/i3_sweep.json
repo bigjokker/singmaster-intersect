@@ -1,0 +1,86 @@
+{
+  "search": "i3_sweep",
+  "i": 3,
+  "N": 714,
+  "K": 272,
+  "d": 442,
+  "k_max": 342,
+  "log10_m": 204.548738,
+  "k_z": [
+    201,
+    271
+  ],
+  "k_bii": [
+    274,
+    342
+  ],
+  "n_z": 71,
+  "n_bii": 69,
+  "primes_bii": [
+    359,
+    367,
+    373,
+    379,
+    383,
+    389,
+    397,
+    401,
+    409,
+    419,
+    421,
+    431,
+    433,
+    439
+  ],
+  "workers": 8,
+  "phases": {
+    "bandii": [
+      {
+        "prime_index": 1,
+        "p": 359,
+        "n": 9,
+        "even": 0.5556,
+        "mean_k": 301
+      },
+      {
+        "prime_index": 2,
+        "p": 367,
+        "n": 2,
+        "even": 0.5,
+        "mean_k": 298
+      },
+      {
+        "prime_index": 3,
+        "p": 373,
+        "n": 0,
+        "even": null,
+        "mean_k": null
+      }
+    ],
+    "zjump": [
+      {
+        "round": 1,
+        "n_primes": 9,
+        "n": 1,
+        "even": 1.0,
+        "mean_k": 233,
+        "n_nolive": 0
+      },
+      {
+        "round": 2,
+        "n_primes": 1,
+        "n": 0,
+        "even": null,
+        "mean_k": null,
+        "n_nolive": 0
+      }
+    ]
+  },
+  "n_bii_alive": 0,
+  "n_z_alive": 0,
+  "bii_survivors": [],
+  "z_survivors": [],
+  "clean": true,
+  "certificate": "Every extra k in [2, k_max] except {K, K+1} for i=3 has r(p) notin I_{p,k}. Together with exact k<=200 and two family columns, N(C(N,K))=6. Not Singmaster.",
+  "seconds": 0.776
+}
