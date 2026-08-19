@@ -6,3 +6,10 @@ __pycache__/
 venv/
 *.egg-info/
 .pytest_cache/
+
+# Stage 3 full row dumps (~80MB each). Summary JSON is tracked.
+results/nextprime_i8_k100001-1000000.json
+results/nextprime_i8_k100001-1000000.jsonl
+# Aborted overnight stub. Do not resume.
+results/nextprime_i8_k1000001-2000000.jsonl
+results/nextprime_i8_k1000001-2000000.json

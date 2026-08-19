@@ -261,6 +261,11 @@ def invert_central(m) -> Optional[int]:
 # ---------------------------------------------------------------------------
 
 DEFAULT_MODULAR_PMAX = 4000
+# Full residue-image cache is only for the small-p modular prefilter.
+# Stage-3 nextprime walks p ~ 1e5–1e6; an unbounded image cache of those
+# (k,p) pairs OOM'd the machine (python ~119 GB, then bugcheck 0x10E).
+COLUMN_IMAGE_CACHE_PMAX = DEFAULT_MODULAR_PMAX
+COLUMN_IMAGE_CACHE_SIZE = 4096
 
 
 def primes_upto(limit: int) -> list[int]:
@@ -275,6 +280,18 @@ def primes_upto(limit: int) -> list[int]:
     return [i for i, is_p in enumerate(sieve) if is_p]
 
 
+def _binom_mod_prime(n: int, k: int, p: int) -> int:
+    """C(n,k) mod p for prime p and 0 <= k <= n < p. Modular product, not exact comb."""
+    if k < 0 or k > n:
+        return 0
+    k = min(k, n - k)
+    num = 1
+    for i in range(k):
+        num = num * (n - i) % p
+        num = num * pow(i + 1, -1, p) % p
+    return num
+
+
 def binom_mod_lucas(n: int, k: int, p: int) -> int:
     """C(n,k) mod p via Lucas' theorem, p prime. 0 <= result < p."""
     if k < 0 or n < 0 or k > n:
@@ -285,7 +302,7 @@ def binom_mod_lucas(n: int, k: int, p: int) -> int:
         ni, ki = nn % p, kk % p
         if ki > ni:
             return 0
-        result = (result * math.comb(ni, ki)) % p
+        result = (result * _binom_mod_prime(ni, ki, p)) % p
         nn //= p
         kk //= p
     return result
@@ -304,17 +321,8 @@ def _k2_possible_mod_p(m_mod: int, p: int) -> bool:
     return _is_qr_mod_p(8 * m_mod + 1, p)
 
 
-@functools.lru_cache(maxsize=None)
-def column_image_mod(k: int, p: int) -> frozenset[int]:
-    """{C(x,k) mod p : x in Z}, valid only for prime p > k.
-
-    Built with the modular recurrence
-        C(x,k) ≡ C(x-1,k) * x * (x-k)^{-1}  (mod p)
-    starting from C(k,k)=1. Never materializes exact math.comb.
-    Bounded-p prefilter (defaults p<=4000), not for huge --pmax.
-    """
-    if p <= k:
-        raise ValueError(f"column_image_mod requires p>k (got p={p}, k={k})")
+def _column_image_mod_uncached(k: int, p: int) -> frozenset[int]:
+    """{C(x,k) mod p : x in Z}, prime p > k. One-shot; do not call in a hot loop."""
     vals = {0, 1}  # C(x,k)=0 for x<k; C(k,k)=1
     acc = 1
     for x in range(k + 1, p):
@@ -323,13 +331,54 @@ def column_image_mod(k: int, p: int) -> frozenset[int]:
     return frozenset(vals)
 
 
+@functools.lru_cache(maxsize=COLUMN_IMAGE_CACHE_SIZE)
+def _column_image_mod_cached(k: int, p: int) -> frozenset[int]:
+    return _column_image_mod_uncached(k, p)
+
+
+def column_image_mod(k: int, p: int) -> frozenset[int]:
+    """{C(x,k) mod p : x in Z}, valid only for prime p > k.
+
+    Built with the modular recurrence
+        C(x,k) ≡ C(x-1,k) * x * (x-k)^{-1}  (mod p)
+    starting from C(k,k)=1. Never materializes exact math.comb.
+    Cached only for p <= COLUMN_IMAGE_CACHE_PMAX. Larger p builds a
+    one-shot set and does not enter the cache.
+    """
+    if p <= k:
+        raise ValueError(f"column_image_mod requires p>k (got p={p}, k={k})")
+    if p <= COLUMN_IMAGE_CACHE_PMAX:
+        return _column_image_mod_cached(k, p)
+    return _column_image_mod_uncached(k, p)
+
+
+def _column_possible_scan(m_mod: int, k: int, p: int) -> bool:
+    """Membership without storing the image. Same recurrence as column_image_mod."""
+    m_mod %= p
+    if m_mod == 0 or m_mod == 1:
+        return True
+    acc = 1
+    for x in range(k + 1, p):
+        acc = (acc * x * pow(x - k, -1, p)) % p
+        if acc == m_mod:
+            return True
+    return False
+
+
 def column_possible(m_mod: int, k: int, p: int) -> bool:
-    """Is m_mod in the image of column k mod p? Requires p > k."""
+    """Is m_mod in the image of column k mod p? Requires p > k.
+
+    Small p uses the cached image (modular prefilter). Large p scans
+    and stops on a hit so a nextprime-style walk cannot accumulate
+    millions of residue sets.
+    """
     if p <= k:
         raise ValueError(f"column_possible requires p>k (got p={p}, k={k})")
     if k == 2:
         return _k2_possible_mod_p(m_mod, p)
-    return m_mod in column_image_mod(k, p)
+    if p <= COLUMN_IMAGE_CACHE_PMAX:
+        return (m_mod % p) in column_image_mod(k, p)
+    return _column_possible_scan(m_mod, k, p)
 
 
 def obstructing_prime(N: int, K: int, k: int, primes: Iterable[int]) -> Optional[int]:
@@ -1052,6 +1101,59 @@ def run_sanity() -> dict:
             break
     if image_ok:
         ok.append("column_image_mod matches C(x,k) mod p for x=0..5p, p<=50")
+
+    # scan path (p above the image-cache cap) must match the set
+    scan_ok = True
+    for p in (101, 1009, 5003):
+        for k in (3, 7, 20, min(40, p - 1)):
+            img = _column_image_mod_uncached(k, p)
+            probes = list(img)[:30]
+            miss = next((x for x in range(p) if x not in img), None)
+            if miss is not None:
+                probes.append(miss)
+            for probe in probes:
+                got = _column_possible_scan(probe, k, p)
+                want = probe in img
+                if got != want:
+                    scan_ok = False
+                    errors.append(
+                        f"scan vs image mismatch k={k} p={p} m={probe} "
+                        f"scan={got} image={want}"
+                    )
+                    break
+            if not scan_ok:
+                break
+        if not scan_ok:
+            break
+    if scan_ok:
+        ok.append("column_possible scan matches image for p=101,1009,5003")
+
+    cache_before = _column_image_mod_cached.cache_info().currsize
+    for kk, pp in ((100, 5003), (1000, 5003), (198289, 200087)):
+        m8 = binom_mod_lucas(mem8.n, mem8.k, pp)
+        column_possible(m8, kk, pp)
+    cache_after = _column_image_mod_cached.cache_info().currsize
+    if cache_after != cache_before:
+        errors.append(
+            f"large-p column_possible grew image cache {cache_before}->{cache_after}"
+        )
+    else:
+        ok.append("large-p column_possible does not cache residue images")
+
+    # replay the first Stage-3 kill from the surviving jsonl
+    q_kill = 100043
+    k_row = 100001
+    m_kill = binom_mod_lucas(mem8.n, mem8.k, q_kill)
+    if column_possible(m_kill, k_row, q_kill):
+        errors.append(f"scan missed known kill C(N,K) vs k={k_row} p={q_kill}")
+    else:
+        ok.append(f"scan reproduces Stage-3 kill k={k_row} p={q_kill}")
+    p_live = int(gmpy2.next_prime(k_row))
+    m_live = binom_mod_lucas(mem8.n, mem8.k, p_live)
+    if not column_possible(m_live, k_row, p_live):
+        errors.append(f"scan false-killed survivor k={k_row} p={p_live}")
+    else:
+        ok.append(f"scan keeps Stage-3 survivor k={k_row} p={p_live}")
 
     passed = not errors
     print()
