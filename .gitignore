@@ -13,3 +13,8 @@ results/nextprime_i8_k100001-1000000.jsonl
 # Aborted overnight stub. Do not resume.
 results/nextprime_i8_k1000001-2000000.jsonl
 results/nextprime_i8_k1000001-2000000.json
+scripts/run-overnight-k1e6-2e6.bat
+
+# Live checkpoints. Final JSON is tracked.
+results/fat_image_hunt.jsonl
+results/walk_369.jsonl

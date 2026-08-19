@@ -34,7 +34,9 @@ python singmaster_intersect.py modular --imin 9 --imax 9 --kextra 80
 | `results/nearby_k2M-8M_de8.json` | Sampled nearby, \(k=2\text{M}..8\text{M}\), \(d,e\le 8\), `new_hits=0` |
 | `results/nextprime_i8_k100001-1000000_summary.json` | Stage 3 census summary (i=8, \(k=10^5..10^6\)). Not a theorem |
 | `results/stragglers_nearK.json` | 25 near-\(K\) Band I \(k\) all killed at \(p>N/2\) |
-| `results/triple_hunt_p1e6-K.json` | NONE-window image runs, \(P_\mathrm{hi}>10^6\): max run 2, 0 triples |
+| `results/triple_hunt_p1e6-K.json` | NONE-window image runs, \(P_\mathrm{hi}>10^6\): max run 2, 0 triples (fat cells not exhaustive) |
+| `results/fat_image_hunt.json` | Fat NONE+PART-lower, first 3 primes: 369 triples, hunt cap max run 3 |
+| `results/walk_369.json` | Those 369 walked past prime 3: max run 6, counts match size law |
 
 Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. Modular already killed those columns.
 

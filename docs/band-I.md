@@ -23,11 +23,12 @@ Write \(\alpha=\lfloor N/p\rfloor\), \(\beta=\lfloor K/p\rfloor\),
 **NONE nonvanishing.** If \(p(\alpha-\beta)\le d\) then
 \(C(N,K)\equiv C(\alpha,\beta)C(n_0,k_0)\not\equiv 0\pmod p\).
 Every NONE survivor is an image match, never a zero.
+PART-lower (\(p<z_\mathrm{lo}\)) is the same image clause (digit-0 silent).
 
 **Kill test (no giant \(m\)).** With
 \(I_g=\{(-1)^j\binom{g-1}{j}\bmod p:0\le j<g\}\)
 (equivalently \(\binom{k+j}{j}\), **not** \(\binom{k}{j}\)),
-a NONE prime kills iff \(r(p)\notin I_g\).
+a NONE / PART-lower prime kills iff \(r(p)\notin I_g\).
 
 **Z-slab.** If no prime lies in \((k,t]\) for threshold \(t=d/(\alpha-\beta)\),
 then \(q(k)\) is at least the first prime after the slab top \(u\).
@@ -40,6 +41,18 @@ then \(q(k)\) is at least the first prime after the slab top \(u\).
 FULL / PART / NONE from where \(z_\mathrm{lo}\) sits in the cell.
 Six Stage-3 fat slabs recover (prime-rounding only).
 
+**Pascal size of \(I_g\).** \(I_g\) is the coefficient set of \((1-X)^{g-1}\)
+over \(\mathbf{F}_p\). For \(g-1<p\) no coefficient vanishes. The only
+systematic collision is the reflection \(j\leftrightarrow n-j\) with \(n=g-1\):
+
+- \(g\) odd (\(n\) even): fold, \(\lvert I_g\rvert\approx(g+1)/2\)
+- \(g\) even (\(n\) odd): sends \(v\mapsto -v\), no fold, \(\lvert I_g\rvert\approx g\)
+
+Remaining collisions match the birthday count
+\(p\bigl(1-(1-1/p)^M\bigr)\) with \(M=g\) or \((g+1)/2\), to \(0.1\%\)
+on the fat cells. Prime gaps are even, so the parity of \(g\) is frozen
+along a chain: even-\(g\) columns stay about twice as easy.
+
 **Band II zero block.** \(K<p\le N/2\Rightarrow p\mid m\). Those primes cannot kill.
 Out of scope for next-prime-below-\(K\).
 
@@ -48,7 +61,7 @@ Out of scope for next-prime-below-\(K\).
 **3(b) / image runs**, all 38 NONE windows on \(10^5\le p\le 10^6\),
 every \(k\) from the preceding Z through first-NONE\(-1\):
 no whole-window image-run; longest consecutive NONE-prime image-run is 2;
-zero triples (expected \(\sim 0.04\) under independence — a sample, not a cutoff).
+zero triples (low-\(\rho\) sample; independence guessed \(\sim 0.04\)).
 Table: [`zeromap-p1e5-1e6.md`](zeromap-p1e5-1e6.md).
 
 Known doubles, each killed at the next NONE prime:
@@ -79,21 +92,52 @@ Not a theorem that the first \(p>N/2\) always kills.
 (the (7,3) double above). Fat cells (5,2) and (2,1) were three canonical \(k\)
 only (`g_max>25000`). [`../results/triple_hunt_p1e6-K.json`](../results/triple_hunt_p1e6-K.json).
 
+**Fat-image hunt**, first three primes of every NONE + PART-lower cell with
+\(P_\mathrm{hi}>10^6\) and \(g_\max>25000\) (8/8, 6.82 h):
+[`../results/fat_image_hunt.json`](../results/fat_image_hunt.json).
+Two-to-three is false as a lemma: 369 first-3-prime image triples
+(324 in (3,1) PART-lower, 20 on genuine NONE). Hunt cap `max_run=3`
+(only three primes tested). Low-\(\rho\) cells (9,3) and (10,4) still
+max run 2; (10,4) recovered \(k=961361\).
+
+Independence-after-size (Pascal + birthday, no fitted parameters) predicts
+the (3,1)/(2,1)/(5,2) counts \(n_1/n_2/n_3\) to \(+1.4\sigma\) on pooled
+triples (344 observed vs 319). The old \(n_1/g_\max=0.0626\Rightarrow
+\lvert I_g\rvert/g\approx 0.355\) step was a slip: that ratio averages
+over \(g=1..g_\max\). Even-\(g\) fraction of the 369: \(332/369=0.900\)
+(predicted \(0.878\)).
+
+**Walk-369**, those 369 \(k\) past prime 3, image clause only, until kill
+or cell end (174 s):
+[`../results/walk_369.json`](../results/walk_369.json).
+Pre-registered vs measured: survive-4 \(42\) (pred \(\sim 44\), band \(32\)–\(58\));
+survive-5 \(4\) (\(\sim 6\)); survive-6 \(1\) (\(\sim 0.8\)); survive-7 \(0\) (\(\sim 0.1\)).
+`max_run=6`. All 369 killed; no cell-end, no digit-0.
+Record: \((3,1)\) \(k=2227205\), \(g=473762\) even, dies at \(2701099\) after
+six image matches. NONE cells (2,1) and (5,2) all died at run 3.
+
 ## Heuristic / open
 
-Long \(q(k)-k\) is Z-slab geometry. A single numerical \(G(k)\) (including
-\(\lceil(\ln k)^2\rceil\)) hides that. Image persistence is rare.
+Long \(q(k)-k\) is Z-slab geometry plus a short image tail. A single
+numerical \(G(k)\) (including \(\lceil(\ln k)^2\rceil\)) hides that.
+The tail is length \(\le 2\) at Stage-3 \(\rho\le 0.039\), and length
+\(6\) at the global max \(\rho=0.176\). Whole-window image-run on a fat
+cell is \(10^{-\mathrm{many}}\) under the size law; the walk is the
+registered check.
 
 \(\rho=\mathrm{Zw}/P_\mathrm{hi}\) (that is \(g/p\) at the first NONE prime for
 an under-Z \(k\)) is \(\le 0.039\) on the Stage-3 map. Globally among two-digit
 cells it reaches **0.176** at \((\alpha,\beta)=(4,1)\), then 0.109 at (7,2).
-So \(g/p\le 1/20\) is not a Band I bound. A hang-guard that walked (4,1)
-would need \(>475240\). Do not run that.
+Same geometry as the fat-image prize: under-Z \(k\) of (4,1), first NONE
+primes of (3,1), \(g_\max=475282\). So \(g/p\le 1/20\) is not a Band I bound.
+A hang-guard that walked (4,1) would need \(>475240\). Do not run that.
 
-**Open.** No proof that a NONE image-run of length 3 is impossible.
-Frozen \((\alpha,\beta)\) writes \(r(p)\) but does not correlate \(m\bmod p_1\)
-with \(m\bmod p_2\) (CRT). Two-to-three is parked. Part 3(a) is open at the
-correlation layer.
+Frozen \((\alpha,\beta)\) writes \(r(p)\) but the falling-factorial identity
+relating \(r(p)\) and \(r(p+h)\) lives in \(\mathbf{Z}\) and does not
+descend \(\mathbf{F}_p\to\mathbf{F}_{p+h}\) (CRT). Independence is the
+right model for consecutive NONE primes; the character-sum shape for a
+correlation bound is the wrong shape (completion loses Pascal folding;
+Weil is vacuous for \(j>\sqrt{p}\)).
 
 This line does not start Stage 4 / \(k=10^6..K\) until-kill, Band II next-prime,
 exact \(i=10\), or nearby \(10^9..2\cdot 10^9\).
