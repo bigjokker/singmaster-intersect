@@ -27,3 +27,6 @@ results/i4_sweep.jsonl
 results/i3_sweep.jsonl
 results/i2_sweep.jsonl
 results/i9_sweep.jsonl
+
+# Witness tables ARE the proof object. Never ignore them.
+!results/*_witness.npz

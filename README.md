@@ -3,9 +3,11 @@
 Search past the Blokhuis–Brouwer–de Weger (2017) envelope for extra binomial representations of the Lind/Singmaster/Tovey \(N=6\) Fibonacci family, plus unsettled nearby-row and column-pair collisions.
 
 This does **not** prove Singmaster’s conjecture. It does prove
-\(N\bigl(C(F_{18}F_{19},F_{16}F_{19})\bigr)=6\) exactly: every extra
-left-half column \(2\le k\le k_{\max}\), \(k\notin\{K,K+1\}\), has a
-modular kill certificate.
+\(N\bigl(C(F_{2i+2}F_{2i+3},F_{2i}F_{2i+3})\bigr)=6\) for
+\(i=2,\ldots,9\): every extra left-half column
+\(2\le k\le k_{\max}\), \(k\notin\{K,K+1\}\), has a recorded modular
+kill certificate. i=9 is \(35{,}522{,}326\) columns; the family through
+i=9 is \(41{,}590{,}228\).
 
 ## Engine
 
@@ -30,6 +32,12 @@ python singmaster_intersect.py modular --imin 9 --imax 9 --kextra 80
 
 | File | Claim |
 |---|---|
+| `results/coverage_ledger.json` | i=2..9 cover \([2,k_{\max}]\setminus\{K,K+1\}\) exactly. \(41{,}590{,}228\) columns |
+| `results/i9_witness.npz` | i=9: \(35{,}522{,}326\) per-column certificates |
+| `results/i9_sweep.json` | i=9 Band II + Z-jump. Band II died pass 9. `clean=false` is correct (four Lucas leftovers, now in the npz) |
+| `results/i8_witness.npz` | i=8: \(5{,}182{,}634\) certificates |
+| `results/i7_witness.npz` | i=7: \(756{,}133\) certificates |
+| `results/i2..i6_witness.npz` | \(46\) / \(339\) / \(2{,}344\) / \(16{,}091\) / \(110{,}315\) certificates |
 | `results/fibonacci_i8_k300.json` | Exact: i=8 has no extra left-half with \(2\le k\le 300\), no central. \(N=6\). ~16.3 h |
 | `results/modular_i8_k400.json` | Modular: i=8, \(k=2..400\) all impossible |
 | `results/modular_i9_k80.json` | Modular: i=9, \(k=2..80\) all impossible |
@@ -50,6 +58,28 @@ python singmaster_intersect.py modular --imin 9 --imax 9 --kextra 80
 | `results/i2_sweep.json` | i=2 Band II only (exact already covered Band I), \(N=6\) |
 
 Do not build \(m_{10}\) (~147 million digits) to answer small-\(k\) extra-rep. Modular already killed those columns.
+
+## Certificates
+
+A sweep proves every extra column has a killing prime.
+`scripts/witness.py` records **which** prime, and re-checks it on an
+independent path (no factorial table, no numpy, no gmpy2):
+
+```text
+python scripts/witness.py verify --file results/i9_witness.npz --sample 5000
+python scripts/coverage_ledger.py
+```
+
+Validity and completeness are separate: every named \((k,p)\) must be a
+kill, and every claimed column must have one.
+
+## i=9 extra columns
+
+Every extra \(k\in[2,k_{\max}]\setminus\{K,K+1\}\) has an unconditional
+modular certificate, all \(35{,}522{,}326\) of them recorded.
+\(N(C(F_{20}F_{21},F_{18}F_{21}))=6\). Not Singmaster.
+
+- [`docs/i9-N6.md`](docs/i9-N6.md) — the \(N=6\) theorem, as a note
 
 ## i=8 extra columns
 
